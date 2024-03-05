@@ -11,6 +11,7 @@ def read_root():
     logger.info('This is an example of logging')
     return {'hello': 'world'}
 
+
 @router.post('/calculate')
 def calculate(premium):
     result = basic_rater(float(premium))
