@@ -5,7 +5,6 @@
 
 This is a basic python api setup using the FastAPI framework.
 
-
 ###  Directory Structure
 ```
 fastapi-starter-template
