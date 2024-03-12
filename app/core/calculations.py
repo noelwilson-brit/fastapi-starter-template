@@ -6,36 +6,41 @@ def basic_rater(rate: float):
     return rate * 2
 
 
-def get_property_data(quote_id) -> dict:
-    # Get data from an API (This is missing auth and will not work this is just for example)
-    proprety_data = requests.get(
-        f'https://fa-rater-api-dev-01.azurewebsites.net/api/v1/property/?quote_id={quote_id}&valuation_results=false&page_size=100&page_number=1&order_by=-tiv_total',
-    )
-    return proprety_data["results"]
+class CalculateTiv():
+
+    def __init__(self):
+        self.property_data = None
+
+    def get_property_data(self, quote_id) -> dict:
+        # Cache property data to avoid duplicate API calls
+        if self.property_data is None:
+            self.proprety_data = requests.get(
+                f'https://fa-rater-api-dev-01.azurewebsites.net/api/v1/property/?quote_id={quote_id}&valuation_results=false&page_size=100&page_number=1&order_by=-tiv_total',
+            )
+        return self.proprety_data["results"]
+
+    def calculate_tiv_sum(self, property_data: dict) -> float:
+        # Parse the data into dataframe
+        df = pd.DataFrame(property_data)
+
+        # Do the maths
+        return df["tiv_building"].sum()
+
+    def save_file(self, output_data, file_name="output.txt"):
+        with open(file_name, "wb") as fp: 
+            fp.write(output_data)
 
 
-def calculate_tiv_sum(property_data: dict) -> float:
-    # Parse the data into dataframe
-    df = pd.DataFrame(property_data)
+    def get_tiv_sum(self, quote_id):
+        proprety_data = self.get_property_data(quote_id=quote_id)
 
-    # Do the maths
-    return df["tiv_building"].sum()
+        tiv_sum = self.calculate_tiv_sum(property_data=proprety_data)
 
+        self.save_file(tiv_sum)
 
-def save_file(output_data, file_name="output.txt"):
-    with open(file_name, "wb") as fp: 
-        fp.write(output_data)
-
-
-def get_tiv_sum(quote_id):
-    proprety_data = get_property_data(quote_id=quote_id)
-
-    tiv_sum = calculate_tiv_sum(property_data=proprety_data)
-
-    save_file(tiv_sum)
-
-    return tiv_sum
+        return tiv_sum
 
 
 if __name__ == "__main__":
-    print(get_tiv_sum("666322de-abfa-4902-a2dd-6c7e9b2d5eea"))
+    calc_instance = CalculateTiv()
+    print(calc_instance.get_tiv_sum("666322de-abfa-4902-a2dd-6c7e9b2d5eea"))
