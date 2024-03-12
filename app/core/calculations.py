@@ -1,9 +1,20 @@
+from ast import List
+from uuid import UUID
 import requests
 import pandas as pd
+import BaseModel from pydantic
 
 
 def basic_rater(rate: float):
     return rate * 2
+
+
+PROPERTY_API = 'https://fa-rater-api-dev-01.azurewebsites.net/api/v1/property/'
+
+
+class PropertyData(BaseModel):
+    id: UUID
+    tiv_building: float
 
 
 class CalculateTiv():
@@ -11,15 +22,16 @@ class CalculateTiv():
     def __init__(self):
         self.property_data = None
 
-    def get_property_data(self, quote_id) -> dict:
+    def get_property_data(self, quote_id: UUID) -> List[PropertyData]:
         # Cache property data to avoid duplicate API calls
         if self.property_data is None:
             self.proprety_data = requests.get(
-                f'https://fa-rater-api-dev-01.azurewebsites.net/api/v1/property/?quote_id={quote_id}&valuation_results=false&page_size=100&page_number=1&order_by=-tiv_total',
+                f'{PROPERTY_API}?quote_id={quote_id}&valuation_results=false&page_size=100&page_number=1&order_by=-tiv_total',
             )
-        return self.proprety_data["results"]
+        # This will error and warn us if we care missing "tiv_building"
+        return [PropertyData(**property) for property in self.proprety_data["results"]]
 
-    def calculate_tiv_sum(self, property_data: dict) -> float:
+    def calculate_tiv_sum(self, property_data: List[PropertyData]) -> float:
         # Parse the data into dataframe
         df = pd.DataFrame(property_data)
 
