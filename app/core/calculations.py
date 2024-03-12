@@ -2,7 +2,7 @@ from ast import List
 from uuid import UUID
 import requests
 import pandas as pd
-import BaseModel from pydantic
+from  pydantic import BaseModel
 
 
 def basic_rater(rate: float):
@@ -28,7 +28,7 @@ class CalculateTiv():
             self.proprety_data = requests.get(
                 f'{PROPERTY_API}?quote_id={quote_id}&valuation_results=false&page_size=100&page_number=1&order_by=-tiv_total',
             )
-        # This will error and warn us if we care missing "tiv_building"
+        # This will error and warn us if we are missing "tiv_building"
         return [PropertyData(**property) for property in self.proprety_data["results"]]
 
     def calculate_tiv_sum(self, property_data: List[PropertyData]) -> float:
