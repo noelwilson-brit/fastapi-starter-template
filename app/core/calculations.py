@@ -1,11 +1,11 @@
-from ast import List
+from typing import List
 from uuid import UUID
 import pandas as pd
 from ..data.property_data import get_property_data, PropertyData
 
 
 def basic_rater(rate: float):
-    return rate * 2
+    return float(rate) * 2
 
 
 class CalculateTiv():

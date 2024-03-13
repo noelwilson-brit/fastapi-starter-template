@@ -1,4 +1,4 @@
-from ast import List
+from typing import List
 from uuid import UUID
 from pydantic import BaseModel
 import requests
