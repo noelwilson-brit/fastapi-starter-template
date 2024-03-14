@@ -1,3 +1,4 @@
+import os
 import pytest
 from app.core.calculations import basic_rater
 
@@ -6,7 +7,9 @@ def create_test_file():
     with open("test_data.json", "wb") as fp:
         fp.write('{"test": "test_data"}'.encode())
     
-    return "test_data.json"
+    yield "test_data.json"
+
+    os.remove("test_data.json")
 
 
 @pytest.mark.parametrize("input_value, expected_result", [
