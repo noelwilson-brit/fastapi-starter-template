@@ -12,7 +12,7 @@ class PropertyData(BaseModel):
     tiv_building: float
 
 
-def get_property_data(self, quote_id: UUID) -> List[PropertyData]:
+def get_property_data(quote_id: UUID) -> List[PropertyData]:
     # Cache property data to avoid duplicate API calls
     proprety_data = requests.get(
         f'{PROPERTY_API}?quote_id={quote_id}&valuation_results=false&page_size=100&page_number=1&order_by=-tiv_total',

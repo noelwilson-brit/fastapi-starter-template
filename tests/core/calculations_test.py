@@ -1,11 +1,18 @@
+import json
 import os
 import pytest
 from app.core.calculations import basic_rater
 
+
 @pytest.fixture
-def create_test_file():
+def test_data():
+    return {"test": "test_data"}
+
+
+@pytest.fixture
+def create_test_file(test_data):
     with open("test_data.json", "wb") as fp:
-        fp.write('{"test": "test_data"}'.encode())
+        fp.write(json.dumps(test_data).encode())
     
     yield "test_data.json"
 
